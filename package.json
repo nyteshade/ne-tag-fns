@@ -1,0 +1,35 @@
+{
+  "name": "ne-tag-fns",
+  "version": "0.1.0",
+  "description": "A small template tag function library for ES6 string literals",
+  "main": "src/functions.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nyteshade/ne-tag-fns.git"
+  },
+  "keywords": [
+    "es6 strings",
+    "template strings",
+    "tag",
+    "functions"
+  ],
+  "author": "Brielle Harrison",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nyteshade/ne-tag-fns/issues"
+  },
+  "homepage": "https://github.com/nyteshade/ne-tag-fns#readme",
+  "devDependencies": {
+    "babel-jest": "^21.2.0",
+    "babel-preset-env": "^1.6.0",
+    "jest": "^21.2.1"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
+  }
+}
