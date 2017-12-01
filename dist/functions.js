@@ -1,4 +1,12 @@
-// @flow
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.handleSubstitutions = handleSubstitutions;
+exports.customDedent = customDedent;
+exports.dedent = dedent;
+
 
 /**
  * One annoyance of working with tag functions is the conversion and inter-
@@ -21,18 +29,11 @@
  * the substitution to a form other than `sub.toString()`. It takes in the
  * substitution and should return a string value of some sort.
  */
-export function handleSubstitutions(
-  strings: Array<string>,
-  subs: Array<mixed>,
-  convert: Function = (object) => '' + object
-): string {
+function handleSubstitutions(strings, subs, convert = object => '' + object) {
   let string = strings.join('');
 
   if (subs && Array.isArray(subs) && subs.length) {
-    string = subs.reduce(
-      (prev, cur, i) => `${prev}${convert(cur)}${strings[i + 1]}`,
-      strings[0]
-    );
+    string = subs.reduce((prev, cur, i) => `${prev}${convert(cur)}${strings[i + 1]}`, strings[0]);
   }
 
   return string;
@@ -54,71 +55,66 @@ export function handleSubstitutions(
  *
  * @param {Object} options
  */
-export function customDedent(
-  options: Object = {
-    dropLowest: undefined
-  }
-) {
+function customDedent(options = {
+  dropLowest: undefined
+}) {
   return function dedent(strings, ...subs) {
     // handle the substitution stuff off the bat, just gets in the way
     // if we try to handle it inline below
-    strings = handleSubstitutions(strings, subs).split('\n')
+    strings = handleSubstitutions(strings, subs).split('\n');
 
     // if the template string is a single value, split it into an array
     // broken out by line
     if (strings.length === 1) {
-      strings = strings[0].split('\n')
+      strings = strings[0].split('\n');
     }
 
     // count the indentation for each line; used below
     let indents = strings.map(s => {
-      let search = /(^[ \t]*)/.exec(s)
-      return search && search[1].length || 0
-    })
+      let search = /(^[ \t]*)/.exec(s);
+      return search && search[1].length || 0;
+    });
 
     // check to see if we should drop lowest (based on lowest being < half)
     if (options.dropLowest) {
-      let isFn = obj => typeof obj === 'function'
-      let lowest = Math.min(...indents)
-      let occurences = indents.filter(o => o === lowest).length
-      let nextLowest = Math.min(...[].concat(indents).filter(o => o !== lowest))
-      let test = (
-        (isFn(options.dropLowest) && options.dropLowest)
-        || ((array, lowest, count) => (count < array.length / 2))
-      )
+      let isFn = obj => typeof obj === 'function';
+      let lowest = Math.min(...indents);
+      let occurences = indents.filter(o => o === lowest).length;
+      let nextLowest = Math.min(...[].concat(indents).filter(o => o !== lowest));
+      let test = isFn(options.dropLowest) && options.dropLowest || ((array, lowest, count) => count < array.length / 2);
 
       if (test(lengths, lowest, occurences)) {
-        indents = indents.map(o => o === lowest ? nextLowest : o)
+        indents = indents.map(o => o === lowest ? nextLowest : o);
       }
     }
 
     // construct a small resuable function for trimming all initial whitespace
-    let trimL = s => s.replace(/^([ \t]*)/mg, '')
-    let trimR = s => s.replace(/([ \t]*)($)/mg, '$1')
+    let trimL = s => s.replace(/^([ \t]*)/mg, '');
+    let trimR = s => s.replace(/([ \t]*)($)/mg, '$1');
 
     // the first line is usually a misnomer, discount it if it is only whitespace
     if (!trimL(strings[0]).length) {
-      strings.splice(0, 1)
-      indents.splice(0, 1)
+      strings.splice(0, 1);
+      indents.splice(0, 1);
     }
 
     // the same goes for the last line
     if (!trimL(strings[strings.length - 1]).length) {
-      strings.splice(strings.length - 1, 1)
-      indents.splice(indents.length - 1, 1)
+      strings.splice(strings.length - 1, 1);
+      indents.splice(indents.length - 1, 1);
     }
 
     // count the minimal amount of shared leading whitespace
-    let excess = Math.min(...indents) || 0
+    let excess = Math.min(...indents) || 0;
 
     // if the excessive whitespace is greater than 0, remove the specified
     // amount from each line
-    strings = strings.map(s => s.replace(/([ \t]*)$/, ''))
-    strings = strings.map(s => s.replace(new RegExp(`^[ \t]{0,${excess}}`), ''))
+    strings = strings.map(s => s.replace(/([ \t]*)$/, ''));
+    strings = strings.map(s => s.replace(new RegExp(`^[ \t]{0,${excess}}`), ''));
 
     // return a single joined string
-    return strings.join('\n')
-  }
+    return strings.join('\n');
+  };
 }
 
 /**
@@ -135,8 +131,9 @@ export function customDedent(
  * of all the potential replacement values
  * @return {string} a combined and dedented string
  */
-export function dedent(strings, ...subs) {
-  return customDedent()(strings, ...subs)
+function dedent(strings, ...subs) {
+  return customDedent()(strings, ...subs);
 }
 
-export default dedent;
+exports.default = dedent;
+//# sourceMappingURL=functions.js.map
