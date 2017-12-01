@@ -57,5 +57,3 @@ typings/
 # dotenv environment variables file
 .env
 
-# ignore the troublesome package-lock.json
-package-lock.json
