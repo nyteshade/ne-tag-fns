@@ -58,15 +58,23 @@ function handleSubstitutions(strings, subs, convert = object => '' + object) {
 function customDedent(options = {
   dropLowest: undefined
 }) {
-  return function dedent(strings, ...subs) {
+  return function (strings, ...subs) {
     // handle the substitution stuff off the bat, just gets in the way
     // if we try to handle it inline below
     strings = handleSubstitutions(strings, subs).split('\n');
 
-    // if the template string is a single value, split it into an array
-    // broken out by line
-    if (strings.length === 1) {
-      strings = strings[0].split('\n');
+    // construct a small resuable function for trimming all initial whitespace
+    let trimL = s => s.replace(/^([ \t]*)/, '');
+    let trimR = s => s.replace(/([ \t]*)($)/, '$1');
+
+    // the first line is usually a misnomer, discount it if it is only whitespace
+    if (!trimL(strings[0]).length) {
+      strings.splice(0, 1);
+    }
+
+    // the same goes for the last line
+    if (!trimL(strings[strings.length - 1]).length) {
+      strings.splice(strings.length - 1, 1);
     }
 
     // count the indentation for each line; used below
@@ -86,22 +94,6 @@ function customDedent(options = {
       if (test(indents, lowest, occurences)) {
         indents = indents.map(o => o === lowest ? nextLowest : o);
       }
-    }
-
-    // construct a small resuable function for trimming all initial whitespace
-    let trimL = s => s.replace(/^([ \t]*)/mg, '');
-    let trimR = s => s.replace(/([ \t]*)($)/mg, '$1');
-
-    // the first line is usually a misnomer, discount it if it is only whitespace
-    if (!trimL(strings[0]).length) {
-      strings.splice(0, 1);
-      indents.splice(0, 1);
-    }
-
-    // the same goes for the last line
-    if (!trimL(strings[strings.length - 1]).length) {
-      strings.splice(strings.length - 1, 1);
-      indents.splice(indents.length - 1, 1);
     }
 
     // count the minimal amount of shared leading whitespace
