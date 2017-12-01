@@ -87,7 +87,7 @@ export function customDedent(
         || ((array, lowest, count) => (count < array.length / 2))
       )
 
-      if (test(lengths, lowest, occurences)) {
+      if (test(indents, lowest, occurences)) {
         indents = indents.map(o => o === lowest ? nextLowest : o)
       }
     }

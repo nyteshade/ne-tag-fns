@@ -83,7 +83,7 @@ function customDedent(options = {
       let nextLowest = Math.min(...[].concat(indents).filter(o => o !== lowest));
       let test = isFn(options.dropLowest) && options.dropLowest || ((array, lowest, count) => count < array.length / 2);
 
-      if (test(lengths, lowest, occurences)) {
+      if (test(indents, lowest, occurences)) {
         indents = indents.map(o => o === lowest ? nextLowest : o);
       }
     }
