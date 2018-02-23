@@ -15,11 +15,11 @@ cd <your project folder>
 npm install --save ne-tag-fns 
 ```
 
-### **Usage**
+### **`dedent` Usage**
 
 In your application, wherever you may have strings that span longer than your code style allows or where you simply wish to clean up your code, import the function and use.
 
-**ES6 Code Without Modules**
+**ES6 Code Without Import**
 
 ```javascript
 const { dedent } = require('ne-tag-fns');
@@ -45,7 +45,7 @@ const someString = dedent`
 `
 ```
 
-**ES6 Code With Modules**
+**ES6 Code With Import**
 
 ```javascript
 import { dedent }  from 'ne-tag-fns';
@@ -71,7 +71,7 @@ const someString = dedent`
 `
 ```
 
-**Inline, a new tag-fn**
+### **`inline` Usage**
 
 The `inline` tag function takes the contents of a given string, even spread over several lines, and converts it to a nice single spaced output. This makes string creation in organizations where you must conform to 80 columns far easier to work with.
 
@@ -82,6 +82,9 @@ Inline does this by performing a few steps
 
 Example
 ```javascript
+  const { inline } = require('ne-tag-fns') // or
+  import { inline } from 'ne-tag-fns'      // if using ES6 with imports
+
   let description = inline`
     This is a nice message, and its contents
     will be all on a single line. 
