@@ -15,6 +15,13 @@ cd <your project folder>
 npm install --save ne-tag-fns 
 ```
 
+### **Tag Functions Included**
+
+Tag functions included with the library that are directly usable are
+
+ * `dedent`
+ * `inline`
+
 ### **`dedent` Usage**
 
 In your application, wherever you may have strings that span longer than your code style allows or where you simply wish to clean up your code, import the function and use.
