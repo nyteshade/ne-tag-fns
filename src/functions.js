@@ -330,6 +330,30 @@ export function customDedent(options: Object = { dropLowest: true }) {
  * @return {string} a combined and dedented string
  */
 export function dedent(strings, ...subs) {
+  return customDedent({dropLowest: false})(
+    strings,
+    ...subs
+  )
+}
+
+/**
+ * This template tag function reduces any leading whitespace of each line of
+ * the template string to the line with the least amount. In some cases,
+ * depending on how your source is written, dropping the lowest indent count
+ * helps. This does that. So if you lines are indented `[2, 4, 4, 8]` then using
+ * `dropLowest` instead of `dedent` makes it effectively `[4, 4, 4, 8]`. Like
+ * `dedent', if the first and/or the last lines in the string are nothing but
+ * whitespace, then those lines are omitted.
+ *
+ * @method dropLowest
+ *
+ * @param {Array<string>} strings the individual strings that appear around
+ * the substitutions that follow in the parameter
+ * @param {Array<mixed>} subs with the spread operator this becomes an array
+ * of all the potential replacement values
+ * @return {string} a combined and dedented string
+ */
+export function dropLowest(strings, ...subs) {
   return customDedent({dropLowest: true})(
     strings,
     ...subs

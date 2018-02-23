@@ -353,6 +353,30 @@ dedent = dedent;exports.
 
 
 
+dropLowest = dropLowest;exports.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -665,29 +689,45 @@ const variations = new _map2.default(); /**
                                    * @param {Array<mixed>} subs with the spread operator this becomes an array
                                    * of all the potential replacement values
                                    * @return {string} a combined and dedented string
-                                   */function dedent(strings, ...subs) {return customDedent({ dropLowest: true })(strings, ...subs);} /**
-                                                                                                                                       * An alternate name for `dedentDropLowest` that can be used to trigger syntax
-                                                                                                                                       * highlighting when used with GraphQL SDL/IDL strings in some IDEs and editors
-                                                                                                                                       *
-                                                                                                                                       * @type {Function}
-                                                                                                                                       * @see #dedentDropLowest
-                                                                                                                                       * @see #customDedent
-                                                                                                                                       */const gql = exports.gql = dedent; /**
-                                                                                                                                                                            * Many times the desire to just make a single long string from several lines
-                                                                                                                                                                            * of text is useful with tag functions. This provides that capability. And
-                                                                                                                                                                            * before returning, each line found in the string will be trimmed of any
-                                                                                                                                                                            * whitespace. Finally any remaining newlines other than the first and last, if
-                                                                                                                                                                            * the first and last contain only whitespace, will be treated as a single
-                                                                                                                                                                            * space
-                                                                                                                                                                            *
-                                                                                                                                                                            * @param {Array<string>} strings the strings that should be processed with
-                                                                                                                                                                            * breaks wherever variable substitutions should occur. These map 1:1 to values
-                                                                                                                                                                            * in `subs`
-                                                                                                                                                                            * @param {Array<mixed>} subs the values that should be substituted into the
-                                                                                                                                                                            * values found in
-                                                                                                                                                                            * @return {string} a single string with spaces instead of line breaks and the
-                                                                                                                                                                            * first and last lines removed if they contain only white space
-                                                                                                                                                                            */function inline(ss, ...subs) {let string = handleSubstitutions(ss, ...subs);var _measureIndents3 = measureIndents(string, { preWork: [stripEmptyFirstAndLast], perLine: [s => s.trim()], postWork: [trimAllIndents] }),_measureIndents4 = (0, _slicedToArray3.default)(_measureIndents3, 2);let strings = _measureIndents4[0],indents = _measureIndents4[1]; // count the minimal amount of shared leading whitespace
+                                   */function dedent(strings, ...subs) {return customDedent({ dropLowest: false })(strings, ...subs);} /**
+                                                                                                                                        * This template tag function reduces any leading whitespace of each line of
+                                                                                                                                        * the template string to the line with the least amount. In some cases,
+                                                                                                                                        * depending on how your source is written, dropping the lowest indent count
+                                                                                                                                        * helps. This does that. So if you lines are indented `[2, 4, 4, 8]` then using
+                                                                                                                                        * `dropLowest` instead of `dedent` makes it effectively `[4, 4, 4, 8]`. Like
+                                                                                                                                        * `dedent', if the first and/or the last lines in the string are nothing but
+                                                                                                                                        * whitespace, then those lines are omitted.
+                                                                                                                                        *
+                                                                                                                                        * @method dropLowest
+                                                                                                                                        *
+                                                                                                                                        * @param {Array<string>} strings the individual strings that appear around
+                                                                                                                                        * the substitutions that follow in the parameter
+                                                                                                                                        * @param {Array<mixed>} subs with the spread operator this becomes an array
+                                                                                                                                        * of all the potential replacement values
+                                                                                                                                        * @return {string} a combined and dedented string
+                                                                                                                                        */function dropLowest(strings, ...subs) {return customDedent({ dropLowest: true })(strings, ...subs);} /**
+                                                                                                                                                                                                                                                * An alternate name for `dedentDropLowest` that can be used to trigger syntax
+                                                                                                                                                                                                                                                * highlighting when used with GraphQL SDL/IDL strings in some IDEs and editors
+                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                * @type {Function}
+                                                                                                                                                                                                                                                * @see #dedentDropLowest
+                                                                                                                                                                                                                                                * @see #customDedent
+                                                                                                                                                                                                                                                */const gql = exports.gql = dedent; /**
+                                                                                                                                                                                                                                                                                     * Many times the desire to just make a single long string from several lines
+                                                                                                                                                                                                                                                                                     * of text is useful with tag functions. This provides that capability. And
+                                                                                                                                                                                                                                                                                     * before returning, each line found in the string will be trimmed of any
+                                                                                                                                                                                                                                                                                     * whitespace. Finally any remaining newlines other than the first and last, if
+                                                                                                                                                                                                                                                                                     * the first and last contain only whitespace, will be treated as a single
+                                                                                                                                                                                                                                                                                     * space
+                                                                                                                                                                                                                                                                                     *
+                                                                                                                                                                                                                                                                                     * @param {Array<string>} strings the strings that should be processed with
+                                                                                                                                                                                                                                                                                     * breaks wherever variable substitutions should occur. These map 1:1 to values
+                                                                                                                                                                                                                                                                                     * in `subs`
+                                                                                                                                                                                                                                                                                     * @param {Array<mixed>} subs the values that should be substituted into the
+                                                                                                                                                                                                                                                                                     * values found in
+                                                                                                                                                                                                                                                                                     * @return {string} a single string with spaces instead of line breaks and the
+                                                                                                                                                                                                                                                                                     * first and last lines removed if they contain only white space
+                                                                                                                                                                                                                                                                                     */function inline(ss, ...subs) {let string = handleSubstitutions(ss, ...subs);var _measureIndents3 = measureIndents(string, { preWork: [stripEmptyFirstAndLast], perLine: [s => s.trim()], postWork: [trimAllIndents] }),_measureIndents4 = (0, _slicedToArray3.default)(_measureIndents3, 2);let strings = _measureIndents4[0],indents = _measureIndents4[1]; // count the minimal amount of shared leading whitespace
   let excess = Math.min(...indents) || 0; // if the excessive whitespace is greater than 0, remove the specified
   // amount from each line
   if (excess > 0) {strings = strings.map(s => s.replace(/([ \t]*)$/, ''));strings = strings.map(s => s.replace(new RegExp(`^[ \t]{0,${excess}}`), ''));}return strings.join(' ');} // Create cached variation with false for all options

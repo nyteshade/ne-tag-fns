@@ -1,5 +1,6 @@
 import {
   dedent,
+  dropLowest,
   gql,
   cautiouslyApply,
   cautiouslyApplyEach,
@@ -10,12 +11,30 @@ import {
 } from '../src/functions'
 
 describe('dedent', () => {
+  let expression = dedent`
+    Some string where all the lines in the comment will
+    have their common amount of shared whitespace removed.
+      This line will be indented by two more spaces than
+      the two previous ones
+  `
+
+  it('should maintain all visible indentation', () => {
+    expect(expression).toBe([
+      'Some string where all the lines in the comment will',
+      'have their common amount of shared whitespace removed.',
+      '  This line will be indented by two more spaces than',
+      '  the two previous ones'
+    ].join('\n'))
+  })
+})
+
+describe('dropLowest', () => {
   const include = "stdio.h"
   const pattern = "%d %s"
 
   // Do not reformat this weird indentation. It is on purpose.
 
-            let expression = dedent`
+            let expression = dropLowest`
               This is a test of the emergency broadcast system
 
               #include <${include}>
