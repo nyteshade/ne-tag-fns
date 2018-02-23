@@ -70,3 +70,22 @@ const someString = dedent`
   - Brie
 `
 ```
+
+**Inline, a new tag-fn**
+
+The `inline` tag function takes the contents of a given string, even spread over several lines, and converts it to a nice single spaced output. This makes string creation in organizations where you must conform to 80 columns far easier to work with.
+
+Inline does this by performing a few steps
+ * If either the first or last line are simply whitespace, they are removed
+ * Each line is trim'ed of leading and trailing whitespace
+ * All remaining carriage returns and new lines will be converted to a single space. 
+
+Example
+```javascript
+  let description = inline`
+    This is a nice message, and its contents
+    will be all on a single line. 
+  `
+  
+  description === `This is a nice message, and its contents will be all on a single line` // true
+```
