@@ -368,7 +368,7 @@ export function dropLowest(strings, ...subs) {
  * @see #dedentDropLowest
  * @see #customDedent
  */
-export const gql = dedent
+export const gql = dropLowest
 
 /**
  * Many times the desire to just make a single long string from several lines
@@ -488,7 +488,7 @@ export function trimAllIndents(
 }
 
 /**
- * A simple non operation preWork function that can make writing and reading
+ * A simple non operation `preWork` function that can make writing and reading
  * code that uses measureIndents easier to work with.
  *
  * @param {string} string any string value
@@ -499,7 +499,7 @@ export function NOOP_PREWORK(string: string): string {
 }
 
 /**
- * A simple non operation preWork function that can make writing and reading
+ * A simple non operation `perLine` function that can make writing and reading
  * code that uses measureIndents easier to work with.
  *
  * @param {string} string any string value
@@ -516,7 +516,7 @@ export function NOOP_PERLINE(
 }
 
 /**
- * A simple non operation postWork function that can make writing and reading
+ * A simple non operation `postWork` function that can make writing and reading
  * code that uses measureIndents easier to work with.
  *
  * @param {[Array<string>, Array<number>]} values the tuple containing the

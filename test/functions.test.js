@@ -65,7 +65,7 @@ describe('dropLowest', () => {
 
 describe('ensure that aliases are kept up', () => {
   it('asserts that gql and dedent are the same', () => {
-    expect(gql).toBe(dedent)
+    expect(gql).toBe(dropLowest)
   })
 })
 
