@@ -20,16 +20,16 @@ npm install --save ne-tag-fns
 Tag functions included with the library that are directly usable are
 
  * `dedent`
+ * `customDedent`
  * `inline`
 
 ### **`dedent` Usage**
 
 In your application, wherever you may have strings that span longer than your code style allows or where you simply wish to clean up your code, import the function and use.
 
-**ES6 Code Without Import**
-
 ```javascript
-const { dedent } = require('ne-tag-fns');
+const { dedent } = require('ne-tag-fns'); // or
+import { dedent } from 'ne-tag-fns'       // when using import
 
 function someFunction() {
   return dedent`
@@ -43,36 +43,38 @@ function someFunction() {
 // or, more simply...
 
 const someString = dedent`
-  Some string where all lines in the comment
-  have the first two spaces removed
-    So the lines above this one will be flush
-    And these two lines will be indented by 2
+  Some string where all lines in the comment will
+  have their common amount of shared whitespace
+  removed. 
+    By default the lowest count, in this case 2, 
+    will be dropped and these two lines will also
+    be flush to the left.
+      But this set of lines will be indented by
+      the difference, so two spaces in.
   
   - Brie
 `
 ```
 
-**ES6 Code With Import**
+### **`customDedent` Usage**
+
+If you do not like that the lowest indentation count is dropped, you can use `customDedent` to turn off this behavior
 
 ```javascript
-import { dedent }  from 'ne-tag-fns';
+const { customDedent } = require('ne-tag-fns'); // or
+import { customDedent } from 'ne-tag-fns'       // when using import
 
-function someFunction() {
-  return dedent`
-    // A comment that has some code in it
-    function contrivedFunction() {
-      return 42
-    }
-  `;
-}
+let custom = customDedent({dropLowest: false})
 
-// or, more simply...
-
-const someString = dedent`
-  Some string where all lines in the comment
-  have the first two spaces removed
-    So the lines above this one will be flush
-    And these two lines will be indented by 2
+const someString = custom`
+  Some string where all lines in the comment will
+  have their common amount of shared whitespace
+  removed. 
+    With custom the lowest count, in this case 2, 
+    will not be dropped and these two lines will also
+    keep their indentation
+      But this set of lines will be indented as
+      seen, so four spaces in.
   
   - Brie
 `
