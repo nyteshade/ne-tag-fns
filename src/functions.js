@@ -346,6 +346,45 @@ export function dedent(strings, ...subs) {
  */
 export const gql = dedent
 
+/**
+ * Many times the desire to just make a single long string from several lines
+ * of text is useful with tag functions. This provides that capability. And
+ * before returning, each line found in the string will be trimmed of any
+ * whitespace. Finally any remaining newlines other than the first and last, if
+ * the first and last contain only whitespace, will be treated as a single
+ * space
+ *
+ * @param {Array<string>} strings the strings that should be processed with
+ * breaks wherever variable substitutions should occur. These map 1:1 to values
+ * in `subs`
+ * @param {Array<mixed>} subs the values that should be substituted into the
+ * values found in
+ * @return {string} a single string with spaces instead of line breaks and the
+ * first and last lines removed if they contain only white space
+ */
+export function inline(ss, ...subs) {
+  let string = handleSubstitutions(ss, ...subs)
+  let [strings, indents] = measureIndents(string, {
+    preWork: [stripEmptyFirstAndLast],
+    perLine: [s => s.trim()],
+    postWork: [trimAllIndents]
+  })
+
+  // count the minimal amount of shared leading whitespace
+  let excess = Math.min(...indents) || 0;
+
+  // if the excessive whitespace is greater than 0, remove the specified
+  // amount from each line
+  if (excess > 0) {
+    strings = strings.map(s => s.replace(/([ \t]*)$/, ''));
+    strings = strings.map(s => s.replace(
+      new RegExp(`^[ \t]{0,${excess}}`), ''
+    ));
+  }
+
+  return strings.join(' ')
+}
+
 // Create cached variation with false for all options
 variations.set(DEDENT,
   customDedent({dropLowest: false})
@@ -405,6 +444,23 @@ export function dropLowestIndents(
   set.delete(lowest)
 
   return [strings, Array.from(set)]
+}
+
+/**
+ * A `postWork` functor for use with `measureIndents` that will modify the
+ * indents array to be a very large number so that all leading whitespace
+ * is removed.
+ *
+ * @param {[Array<string>, Array<number>]} values the tuple containing the
+ * modified strings and indent values
+ * @return {[Array<string>, Array<number>]} returns a tuple containing an
+ * unmodified set of strings and a modified indents array with a single large
+ * number so that all leading whitespace is removed.
+ */
+export function trimAllIndents(
+  values: [Array<string>, Array<number>]
+): [Array<string>, Array<number>] {
+  return [values[0], [Number.MAX_SAFE_INTEGER]]
 }
 
 /**

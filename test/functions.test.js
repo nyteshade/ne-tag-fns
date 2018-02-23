@@ -5,7 +5,8 @@ import {
   cautiouslyApplyEach,
   measureIndents,
   dropLowestIndents,
-  stripEmptyFirstAndLast
+  stripEmptyFirstAndLast,
+  inline
 } from '../src/functions'
 
 describe('dedent', () => {
@@ -151,3 +152,16 @@ describe('check to see that dropLowestIndents works as expected', () => {
     expect(Math.min(...indents)).toBe(4)
   })
 })
+
+describe('check to see that inline works as expected', () => {
+  it('should be "one, two, three"', () => {
+    let string = inline`
+      one,
+      two,
+      three
+    `
+
+    expect(string).toBe('one, two, three')
+  })
+})
+
