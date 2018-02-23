@@ -14,5 +14,6 @@
     "transform-runtime",
     "transform-decorators-legacy"
   ],
-  "sourceMaps": "both"
+  "sourceMaps": "both",
+  "retainLines": true
 }
