@@ -19,20 +19,20 @@ npm install --save ne-tag-fns
 
 Tag functions included with the library that are directly usable are
 
+ * `dropLowest`
  * `dedent`
- * `customDedent`
  * `inline`
 
-### **`dedent` Usage**
+### **`dropLowest` Usage**
 
 In your application, wherever you may have strings that span longer than your code style allows or where you simply wish to clean up your code, import the function and use.
 
 ```javascript
-const { dedent } = require('ne-tag-fns'); // or
-import { dedent } from 'ne-tag-fns'       // when using import
+const { dropLowest } = require('ne-tag-fns'); // or
+import { dropLowest } from 'ne-tag-fns'       // when using import
 
 function someFunction() {
-  return dedent`
+  return dropLowest`
     // A comment that has some code in it
     function contrivedFunction() {
       return 42
@@ -42,13 +42,14 @@ function someFunction() {
 
 // or, more simply...
 
-const someString = dedent`
+const someString = dropLowest`
   Some string where all lines in the comment will
   have their common amount of shared whitespace
   removed. 
     By default the lowest count, in this case 2, 
     will be dropped and these two lines will also
-    be flush to the left.
+    be flush to the left to allow for some margin 
+    of error.
       But this set of lines will be indented by
       the difference, so two spaces in.
   
@@ -56,17 +57,15 @@ const someString = dedent`
 `
 ```
 
-### **`customDedent` Usage**
+### **`dedent` Usage**
 
-If you do not like that the lowest indentation count is dropped, you can use `customDedent` to turn off this behavior
+If you do not like that the lowest indentation count is dropped, you can use `dedent` to turn off this behavior
 
 ```javascript
-const { customDedent } = require('ne-tag-fns'); // or
-import { customDedent } from 'ne-tag-fns'       // when using import
+const { dedent } = require('ne-tag-fns'); // or
+import { dedent } from 'ne-tag-fns'       // when using import
 
-let custom = customDedent({dropLowest: false})
-
-const someString = custom`
+const someString = dedent`
   Some string where all lines in the comment will
   have their common amount of shared whitespace
   removed. 
