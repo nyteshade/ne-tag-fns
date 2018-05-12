@@ -10,9 +10,7 @@
     "flow"
   ],
   "plugins": [
-    ["transform-class-properties", { "spec": true }],
-    "transform-runtime",
-    "transform-decorators-legacy"
+    "transform-flow-strip-types"
   ],
   "sourceMaps": "both",
   "retainLines": true
