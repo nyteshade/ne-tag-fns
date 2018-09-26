@@ -24,17 +24,36 @@
   },
   "homepage": "https://github.com/nyteshade/ne-tag-fns#readme",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-jest": "^23.0.0",
-    "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-flow": "^6.23.0",
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.0.0",
+    "@babel/plugin-transform-flow-strip-types": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-flow": "^7.0.0",
+    "babel-7-jest": "^21.3.3",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^23.6.0",
     "flow-bin": "^0.80.0",
-    "jest": "^22.4.3"
+    "jest": "^23.6.0"
   },
   "babel": {
     "presets": [
-      "env"
-    ]
-  }
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": true
+          }
+        }
+      ],
+      "@babel/preset-flow"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-optional-chaining",
+      "@babel/plugin-transform-flow-strip-types"
+    ],
+    "sourceMaps": "both",
+    "retainLines": true
+  },
+  "dependencies": {}
 }
