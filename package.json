@@ -1,6 +1,6 @@
 {
   "name": "ne-tag-fns",
-  "version": "0.6.7",
+  "version": "0.6.8",
   "description": "A small template tag function library for ES6 string literals",
   "main": "dist/functions.js",
   "scripts": {
