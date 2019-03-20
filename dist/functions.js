@@ -441,7 +441,11 @@ function stripEmptyFirstAndLast(string) {
   }
 
   // the same goes for the last line
-  if (!trimL(strings[strings.length - 1]).length) {
+  if (
+  strings.length &&
+  strings[strings.length - 1] &&
+  !trimL(strings[strings.length - 1]).length)
+  {
     strings.splice(strings.length - 1, 1);
   }
 
