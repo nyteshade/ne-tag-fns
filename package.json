@@ -33,7 +33,7 @@
     "babel-7-jest": "^21.3.3",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^23.6.0",
-    "flow-bin": "^0.96.0",
+    "flow-bin": "^0.97.0",
     "jest": "^23.6.0"
   },
   "babel": {
