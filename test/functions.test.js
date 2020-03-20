@@ -7,7 +7,8 @@ import {
   measureIndents,
   dropLowestIndents,
   stripEmptyFirstAndLast,
-  inline
+  inline,
+  inlineJoin
 } from '../src/functions'
 
 describe('dedent', () => {
@@ -184,3 +185,78 @@ describe('check to see that inline works as expected', () => {
   })
 })
 
+describe('check to see that inlineJoin works as expected', () => {
+  it('should be "one,two,three"', () => {
+    let string = inlineJoin()`
+      one,
+      two,
+      three
+    `
+
+    expect(string).toBe('one,two,three')
+  })
+})
+
+describe('check to see that inlineJoin("-") works as expected', () => {
+  it('should be "one-two-three"', () => {
+    let string = inlineJoin('-')`
+      one
+      two
+      three
+    `
+
+    expect(string).toBe('one-two-three')
+  })
+})
+
+describe('check to see that inlineJoin("-", true) works as expected', () => {
+  it('should be "one-two-three-"', () => {
+    let string = inlineJoin('-',true)`
+
+
+      one
+      two
+      three
+
+    `
+
+    expect(string).toBe('one-two-three-')
+  })
+})
+
+describe(
+  'check to see that inlineJoin("-", true, true) works as expected',
+  () => {
+    it('should be "one-two-three"', () => {
+      let string = inlineJoin('-', true, true)`
+
+
+        one
+        two
+        three
+
+      `
+
+      expect(string).toBe('one-two-three')
+    })
+  }
+)
+
+describe(
+  'check to see that inlineJoin("-", false, true) works as expected',
+  () => {
+    it('should be "--one-two-three"', () => {
+      let string = inlineJoin('-', false, true)`
+
+
+        one
+        two
+        three
+
+
+      `
+
+      expect(string).toBe('--one-two-three')
+    })
+  }
+)

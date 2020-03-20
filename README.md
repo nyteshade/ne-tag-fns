@@ -11,7 +11,7 @@ Simply add the module to your code as a regular, peer or dev dependency as you s
 
 ```sh
 cd <your project folder>
-npm install --save ne-tag-fns 
+npm install --save ne-tag-fns
 ```
 
 ### **Tag Functions Included**
@@ -21,6 +21,71 @@ Tag functions included with the library that are directly usable are
  * `dropLowest`
  * `dedent`
  * `inline`
+ * `inlineJoin`
+
+### **`inline` Usage**
+
+The `inline` tag function takes the contents of a given string, even spread over several lines, and converts it to a nice single spaced output. This makes string creation in organizations where you must conform to 80 columns far easier to work with.
+
+Inline does this by performing a few steps
+  * If either the first or last line are simply whitespace, they are removed
+  * Each line is trim'ed of leading and trailing whitespace
+  * All remaining carriage returns and new lines will be converted to a single space.
+
+Example
+```javascript
+  const { inline } = require('ne-tag-fns') // or
+  import { inline } from 'ne-tag-fns'      // if using ES6 with imports
+
+  let description = inline`
+    This is a nice message, and its contents
+    will be all on a single line.
+  `
+
+  description === `This is a nice message, and its contents will be all on a single line` // true
+```
+
+### **`inlineJoin` Usage**
+
+The `inlineJoin` tag function takes the contents of a given string, even spread over several lines, and converts it to a nice single spaced output. This makes string creation in organizations where you must conform to 80 columns far easier to work with.
+
+inlineJoin does this by performing a few steps
+  * If either the first or last line are simply whitespace, they are removed
+  * Each line is trim'ed of leading and trailing whitespace
+  * All remaining carriage returns and new lines will be converted to the supplied string.
+  * Optionally, all leading newlines can be trimmed
+  * Optionally, all trailing newlines can be trimmed
+
+Unlike `inline`, `inlineJoin` needs to be executed with parameters before it
+is used as a tag function as its execution actually returns the tag function
+customized in the manner desired.
+
+Example
+```javascript
+  const { inlineJoin } = require('ne-tag-fns') // or
+  import { inlineJoin } from 'ne-tag-fns'      // if using ES6 with imports
+
+  let description = inlineJoin('-')`
+    ABC
+    DEF
+  ` === 'ABC-DEF' // true
+
+  let skipLeading = inlineJoin('', true)`
+
+    ABC
+    DEF
+  ` === 'ABCDEF' // true
+
+  let skipLeadingAndTrailing = inlineJoin('-', true, true)`
+
+    ABC
+    DEF
+    GHI
+
+
+
+  ` === `ABC-DEF-GHI` // true
+```
 
 ### **`dropLowest` Usage**
 
@@ -44,14 +109,14 @@ function someFunction() {
 const someString = dropLowest`
   Some string where all lines in the comment will
   have their common amount of shared whitespace
-  removed. 
-    By default the lowest count, in this case 2, 
+  removed.
+    By default the lowest count, in this case 2,
     will be dropped and these two lines will also
-    be flush to the left to allow for some margin 
+    be flush to the left to allow for some margin
     of error.
       But this set of lines will be indented by
       the difference, so two spaces in.
-  
+
   - Brie
 `
 ```
@@ -67,35 +132,13 @@ import { dedent } from 'ne-tag-fns'       // when using import
 const someString = dedent`
   Some string where all lines in the comment will
   have their common amount of shared whitespace
-  removed. 
-    With custom the lowest count, in this case 2, 
+  removed.
+    With custom the lowest count, in this case 2,
     will not be dropped and these two lines will also
     keep their indentation
       But this set of lines will be indented as
       seen, so four spaces in.
-  
+
   - Brie
 `
-```
-
-### **`inline` Usage**
-
-The `inline` tag function takes the contents of a given string, even spread over several lines, and converts it to a nice single spaced output. This makes string creation in organizations where you must conform to 80 columns far easier to work with.
-
-Inline does this by performing a few steps
- * If either the first or last line are simply whitespace, they are removed
- * Each line is trim'ed of leading and trailing whitespace
- * All remaining carriage returns and new lines will be converted to a single space. 
-
-Example
-```javascript
-  const { inline } = require('ne-tag-fns') // or
-  import { inline } from 'ne-tag-fns'      // if using ES6 with imports
-
-  let description = inline`
-    This is a nice message, and its contents
-    will be all on a single line. 
-  `
-  
-  description === `This is a nice message, and its contents will be all on a single line` // true
 ```

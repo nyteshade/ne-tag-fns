@@ -1,4 +1,4 @@
-"use strict";Object.defineProperty(exports, "__esModule", { value: true });exports.handleSubstitutions = handleSubstitutions;exports.cautiouslyApplyEach = cautiouslyApplyEach;exports.cautiouslyApply = cautiouslyApply;exports.measureIndents = measureIndents;exports.customDedent = customDedent;exports.dedent = dedent;exports.dropLowest = dropLowest;exports.inline = inline;exports.stripEmptyFirstAndLast = stripEmptyFirstAndLast;exports.dropLowestIndents = dropLowestIndents;exports.trimAllIndents = trimAllIndents;exports.NOOP_PREWORK = NOOP_PREWORK;exports.NOOP_PERLINE = NOOP_PERLINE;exports.NOOP_POSTWORK = NOOP_POSTWORK;exports.default = exports.variations = exports.gql = void 0;
+"use strict";Object.defineProperty(exports, "__esModule", { value: true });exports.handleSubstitutions = handleSubstitutions;exports.cautiouslyApplyEach = cautiouslyApplyEach;exports.cautiouslyApply = cautiouslyApply;exports.measureIndents = measureIndents;exports.customDedent = customDedent;exports.dedent = dedent;exports.dropLowest = dropLowest;exports.inline = inline;exports.inlineJoin = inlineJoin;exports.postStripEmptyFirstAndLast = postStripEmptyFirstAndLast;exports.stripEmptyFirstAndLast = stripEmptyFirstAndLast;exports.dropLowestIndents = dropLowestIndents;exports.trimAllIndents = trimAllIndents;exports.NOOP_PREWORK = NOOP_PREWORK;exports.NOOP_PERLINE = NOOP_PERLINE;exports.NOOP_POSTWORK = NOOP_POSTWORK;exports.default = exports.variations = exports.gql = void 0;
 
 // These constants can be discarded in the next major version where
 // customDedent is no longer present
@@ -289,7 +289,11 @@ function customDedent(options = { dropLowest: true }) {
     // pass in the handlers to strip empty head and tail strings and then
     // drop the lowest value as this is often a requested feature
     {
-      preWork: [stripEmptyFirstAndLast],
+      preWork: [
+      options.skipStrip ?
+      NOOP_PREWORK :
+      stripEmptyFirstAndLast],
+
       postWork: [
       options.dropLowest ?
       dropLowestIndents :
@@ -387,26 +391,63 @@ const gql = dropLowest;
                          * first and last lines removed if they contain only white space
                          */exports.gql = gql;
 function inline(ss, ...subs) {
-  let string = handleSubstitutions(ss, ...subs);
-  let [strings, indents] = measureIndents(string, {
-    preWork: [stripEmptyFirstAndLast],
-    perLine: [s => s.trim()],
-    postWork: [trimAllIndents] });
+  return inlineJoin(' ')(ss, ...subs);
+}
+
+/**
+   * `inlineJoin` is very similar to `inline` with the exception that a joinder
+   * string can be supplied. For every newline encountered, rather than a space
+   * the joint filler will be the value supplied. This type of tag function takes
+   * a parameter and must be invoked at the time of usage, simply supplying the
+   * function name before the tag string will not work as intended.
+   *
+   * Examples:
+   * ```
+   * let noSpaces = inlineJoin()`
+   *   oneMississippi
+   *   twoMississippi
+   * ` == 'oneMississippitwoMississippi' // true
+   *
+   * or add dashes
+   * let dashes = inlineJoin('-')`
+   *   ASDFAS
+   *   AQWERT
+   *   ZXCVZX
+   * ` == 'ASDFAS-AQWERT-ZXCVZX' // true
+   * ```
+   *
+   * @method inlineJoin
+   * @param {String} joiner a string to use when joining the values, defaults
+   * to an empty string with no whitespace between each line
+   * @return {Function} the actual tag function designed to combine the overall
+   * tag string into a single line string with no carriage returns or newlines
+   */
+function inlineJoin(
+joiner = '',
+allLeading = false,
+allTrailing = false)
+{
+  return function _inlineJoiner(ss, ...subs) {
+    let string = handleSubstitutions(ss, ...subs);
+    console.log(`inlineJoin(${joiner}, ${allLeading}, ${allTrailing}) = '${string}'`);
+
+    let [strings, indents] = measureIndents(string, {
+      preWork: [],
+      perLine: [s => s.trim()],
+      postWork: [
+      // trimAllIndents,
+      ([s, i]) => {s = s.map(s => s.trim());return [s, i];},
+      postStripEmptyFirstAndLast.bind({ allLeading, allTrailing })] });
 
 
-  // count the minimal amount of shared leading whitespace
-  let excess = Math.min(...indents) || 0;
 
-  // if the excessive whitespace is greater than 0, remove the specified
-  // amount from each line
-  if (excess > 0) {
-    strings = strings.map(s => s.replace(/([ \t]*)$/, ''));
-    strings = strings.map(s => s.replace(
-    new RegExp(`^[ \t]{0,${excess}}`), ''));
+    // if the excessive whitespace is greater than 0, remove the specified
+    // amount from each line
+    strings = strings.map(s => {return s.trim();});
+    indents = indents.map(i => 0);
 
-  }
-
-  return strings.join(' ');
+    return strings.join(joiner);
+  };
 }
 
 // Create cached variation with false for all options
@@ -420,14 +461,89 @@ customDedent({ dropLowest: true }));
 
 
 /**
-                                      * A `preWork` functor for use with `measureIndents` that strips the first and
-                                      * last lines from a given string if that string has nothing but whitespace. A
-                                      * commonly desired functionality when working with multiline template strings
+                                      * A little bit of extra coverage to ensure that first and last
+                                      * newlines, represented by empty strings in the strings array,
+                                      * are stripped. If the function is bound to an object with
+                                      * the parameter `allLeading` or `allTrailing`, then not only the
+                                      * first and last but all leading and all trailing new lines will
+                                      * be stripped. The config values are boolean so true will activate
+                                      * and false will ignore additional leading and trailing values
                                       *
-                                      * @param  {string} string the string to parse
-                                      * @return {string} a modified string missing bits that make up the first and/
-                                      * or last lines **if** either of these lines are comprised of only whitespace
+                                      * @method postStripEmptyFirstAndLast
+                                      * @param {[type]} stringsAndIndents [description]
+                                      * @return {[type]} [description]
                                       */
+function postStripEmptyFirstAndLast(
+stringsAndIndents)
+{
+  // Destructure the supplied stringsAndIndents property
+  let [strings, indents] = stringsAndIndents;
+
+  // This function always removes first and last, so lets get those
+  // out of the way first
+  let first = strings && strings[0];
+  let last = strings && strings[strings.length - 1];
+
+  // This is for advanced usage of trimming all leading and trailing
+  let toProcess = [];
+
+  // Trim the first and last if they are newlines represented by empty strings
+  if (first === '') {strings.shift();indents.shift();}
+  if (last === '') {strings.pop();indents.pop();}
+
+  console.log('strings: ', strings);
+
+  // Check to see if this function is bound to an object that has an allLeading
+  // property to signal we should remove all leading newlines, and not just the
+  // first one.
+  if (this && this.allLeading) {
+    toProcess.push([strings, 'shift']);
+  }
+
+  // Check to see if this function is bound to an object that has an
+  // allTrailing property to signal we should remove all trailing newlines,
+  // and not just the last one.
+  if (this && this.allTrailing) {
+    toProcess.push([
+    // Copy and reverse the strings array so we work backwards
+    strings.reduceRight((a, c) => {a.push(c);return a;}, []),
+    'pop']);
+
+  }
+
+  // Each entry in toProcess will be an array to traverse and a function name
+  // to invoke on the actual strings array.
+  for (let value of toProcess) {
+    let [array, fnName] = value;
+
+    console.log('', array, `and "${fnName}"\n`, strings);
+
+    for (let string of array) {
+      if (/^\s*$/.exec(string)) {
+        strings[fnName]();
+        indents[fnName]();
+        console.log(`${fnName}'ed "${string}"`);
+        continue;
+      } else
+      {
+        console.log(`broke because "${string}"`);
+        break;
+      }
+    }
+  }
+
+  return [strings, indents];
+}
+
+/**
+   * A `preWork` functor for use with `measureIndents` that strips the first and
+   * last lines from a given string if that string has nothing but whitespace. A
+   * commonly desired functionality when working with multiline template strings
+   *
+   * @param  {string} string the string to parse
+   * @return {string} a modified string missing bits that make up the first and/
+   * or last lines **if** either of these lines are comprised of only whitespace
+   */
 function stripEmptyFirstAndLast(string) {
   let strings = string.split(/\r?\n/);
   // construct a small resuable function for trimming all initial whitespace
