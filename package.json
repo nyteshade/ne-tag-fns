@@ -34,7 +34,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^23.6.0",
     "braces": "^2.3.1",
-    "flow-bin": "^0.121.0",
+    "flow-bin": "^0.122.0",
     "jest": "^23.6.0",
     "minimist": "^1.2.2"
   },
